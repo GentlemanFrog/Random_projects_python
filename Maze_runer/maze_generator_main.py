@@ -1,6 +1,7 @@
 # Simple maze generator:
 
 import pygame, sys
+import random
 import turtle
 
 
@@ -60,6 +61,27 @@ class Maze:
         pygame.draw.line(screen, (0, 0, 0), bottomright, topright, 5)
         pygame.draw.line(screen, (0, 0, 0), bottomleft, bottomright, 5)
 
+    def make_maze(self):
+        disconect_node = None
+        for node in self.iter_node():
+            disconect_node_N = self.get_node(node.nod_row-1, node.nod_column)
+            disconect_node_E = self.get_node(node.nod_row, node.nod_column+1)
+            if  disconect_node_N==None and disconect_node_E == None:
+                disconect_node = None
+            elif disconect_node_N != None and disconect_node_E == None:
+                disconect_node = disconect_node_N
+            elif disconect_node_N == None and disconect_node_E != None:
+                disconect_node = disconect_node_E
+            else:
+                rand_number = random.randint(0,1)
+                if rand_number:
+                    disconect_node = disconect_node_E
+                else:
+                    disconect_node = disconect_node_N
+
+            if disconect_node != None:
+                node.destroy_wall(disconect_node)
+
 
 class Node:  # It's square in maze (NxM structure)
     def __init__(self, row, column, size):
@@ -108,6 +130,18 @@ class Node:  # It's square in maze (NxM structure)
             ending_pos = (self.node_x+self.nod_size, self.node_y + self.nod_size)
             pygame.draw.line(screen, (0,0,0), starting_pos, ending_pos, 1)
 
+    def destroy_wall(self, node, flag = True):
+        for key, val in self.nod_walls.items():
+            if val != None and val.nod_row == node.nod_row and val.nod_column == node.nod_column:
+                self.nod_walls[key] = None
+            else:
+                print("Node which you want destroy is not found.")
+                pass
+        # it's also have to brake its own directions but without a flag it will make infinite recursion
+        # so we have to use the flag to stop this proces
+        if flag:
+            node.destroy_wall(self, False)
+
 
 def main():
     # Initiation of window screen
@@ -117,15 +151,16 @@ def main():
     screen.fill((255, 255, 255))
 
     # Setting the size of maze displayed in window:
-    num_rows = 6
-    num_columns = 6
+    num_rows = 32
+    num_columns = 32
     # Each node is square of the n pixel size
-    node_size = 30
+    node_size = 27
     # Creating object of class maze: and defining its property
     maze = Maze(num_rows, num_columns, node_size)
     # We need information about connection of each node with adjacent node so we make method:
     maze.nodes_starting_connection()  # Connecting means there is existing wall in dictionary
     # maze.print_maze()
+    maze.make_maze()
     maze.draw(screen)
 
     # Making game loop for visual features of pygame
