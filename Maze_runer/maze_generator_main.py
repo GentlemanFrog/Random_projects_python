@@ -39,7 +39,26 @@ class Maze:
             print(node.nod_row, node.nod_column, node.connections())
 
     def draw(self, screen):
+        self.draw_outer_boundary(screen)
+        for node in self.iter_node():
+            node.draw_node_walls(screen)
 
+    def draw_outer_boundary(self, screen):
+        # Function drawing line around the all maze:
+        # We're getting the information about corners and then we simply
+        # draw lines connecting corners, to make it we have to use the size of nodes
+        # to get pixel values to know where on the screen this node should be:
+        topleft = (self.m_node_size, self.m_node_size)
+        topright = (self.m_node_size + self.m_node_size*self.m_num_columns, self.m_node_size)
+        bottomleft = (self.m_node_size, self.m_node_size + self.m_node_size*self.m_num_rows)
+        bottomright = (self.m_node_size + self.m_node_size*self.m_num_columns, self.m_node_size +
+                       self.m_node_size*self.m_num_rows)
+
+        # Drawing lines connecting corners
+        pygame.draw.line(screen, (0, 0, 0), topleft, topright, 5)
+        pygame.draw.line(screen, (0, 0, 0), topleft, bottomleft, 5)
+        pygame.draw.line(screen, (0, 0, 0), bottomright, topright, 5)
+        pygame.draw.line(screen, (0, 0, 0), bottomleft, bottomright, 5)
 
 
 class Node:  # It's square in maze (NxM structure)
@@ -50,6 +69,9 @@ class Node:  # It's square in maze (NxM structure)
         # Dictionary storing information about each square walls corresponding to N S W E
         # Keys: N S W E, value is information of adjacent Node which wall we are using (deleted or save)
         self.nod_walls = {}
+        # x,y is top left corner of the node
+        self.node_x = self.nod_size*self.nod_column + self.nod_size
+        self.node_y = self.nod_size*self.nod_row + self.nod_size
 
     def connections(self):
         nod_list = []
@@ -59,6 +81,32 @@ class Node:  # It's square in maze (NxM structure)
             if val != None:
                 nod_list.append(key)
         return nod_list
+
+    def draw_node_walls(self, screen):
+        # We are drawing line for each of the walls
+        # If there is valid wall we draw line from starting position to ending position we give
+        # So we're starting from point 0.0 of the current node we're drawing. X and Y are the same position
+        # on start (0.0). To draw the line on N we manipulate the ending position of x to be at the right
+        # top corner of a node, while the y position stay the same because we want to achieve straight line.
+        if self.nod_walls['N'] != None:
+            starting_pos = (self.node_x, self.node_y)
+            ending_pos = (self.node_x+self.nod_size, self.node_y)
+            pygame.draw.line(screen, (0,0,0), starting_pos, ending_pos, 1)
+
+        if self.nod_walls['S'] != None:
+            starting_pos = (self.node_x, self.node_y + self.nod_size)
+            ending_pos = (self.node_x + self.nod_size, self.node_y + self.nod_size)
+            pygame.draw.line(screen, (0,0,0), starting_pos, ending_pos, 1)
+
+        if self.nod_walls['W'] != None:
+            starting_pos = (self.node_x, self.node_y)
+            ending_pos = (self.node_x, self.node_y+self.nod_size)
+            pygame.draw.line(screen, (0,0,0), starting_pos, ending_pos, 1)
+
+        if self.nod_walls['E'] != None:
+            starting_pos = (self.node_x +self.nod_size, self.node_y)
+            ending_pos = (self.node_x+self.nod_size, self.node_y + self.nod_size)
+            pygame.draw.line(screen, (0,0,0), starting_pos, ending_pos, 1)
 
 
 def main():
