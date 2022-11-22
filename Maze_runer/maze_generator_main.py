@@ -135,7 +135,7 @@ class Node:  # It's square in maze (NxM structure)
             if val != None and val.nod_row == node.nod_row and val.nod_column == node.nod_column:
                 self.nod_walls[key] = None
             else:
-                print("Node which you want destroy is not found.")
+                #print("Node which you want destroy is not found.")
                 pass
         # it's also have to brake its own directions but without a flag it will make infinite recursion
         # so we have to use the flag to stop this proces
