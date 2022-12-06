@@ -3,10 +3,10 @@ from typing import List
 
 class ShoppingCart:
     def __init__(self) -> None:
-        pass
+        self.items: List[str] = []
     
-    def add(self, item: str):
-        pass
+    def add_item_to_list(self, item: str):
+        self.items.append(item)
     
     def size(self) -> int:
         return 0
