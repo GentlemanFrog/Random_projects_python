@@ -9,7 +9,7 @@ class ShoppingCart:
         self.items.append(item)
     
     def size(self) -> int:
-        return 0
+        return len(self.items)
     
     def get_item(self)-> List[str]:
         pass
