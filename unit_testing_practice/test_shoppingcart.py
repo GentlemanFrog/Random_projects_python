@@ -20,10 +20,28 @@ def test_when_item_added_and_list_contains_it():
 
 def test_to_check_overflow_of_list_with_fixed_range():
     cart = ShoppingCart(5)
+    for i in range(5):
+        cart.add_item_to_list('Cans')
     
     '''This line I expect that code below this lane raises
-    this type of error, if it does then the pytest will pass it'''
+    this type of error, if it does then the pytest will pass it.
+    In this form of the test i exactly know that it raises on the
+    6th item which is out of max range'''
     with pytest.raises(OverflowError):
-        for i in range(6):
-            cart.add_item_to_list('Cans')
+        cart.add_item_to_list('Cans')
         
+def test_total_price_from_items_in_cart():
+    cart = ShoppingCart(5)
+    cart.add_item_to_list('Banana')
+    cart.add_item_to_list('Beans')
+    cart.add_item_to_list('Cans')
+    
+    price_map = {
+        "Banana": 2.0,
+        "Beans": 3.0,
+        "Cans": 5.0
+    }
+    
+    '''Total price of the items we add should be equal
+    to 10.0 '''
+    assert cart.get_total_price(price_map) == 10.0
