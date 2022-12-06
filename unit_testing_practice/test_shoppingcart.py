@@ -1,4 +1,5 @@
 from shoppingcart import ShoppingCart
+import pytest
 
 def test_can_add_item_to_cart():
     # making instance of class to test it:
@@ -20,8 +21,9 @@ def test_when_item_added_and_list_contains_it():
 def test_to_check_overflow_of_list_with_fixed_range():
     cart = ShoppingCart(5)
     
-    '''By adding 6 items we want it to fail, if anothre value
-    is in cart change it to check it its working'''
-    for i in range(6):
-        cart.add_item_to_list('Cans')
+    '''This line I expect that code below this lane raises
+    this type of error, if it does then the pytest will pass it'''
+    with pytest.raises(OverflowError):
+        for i in range(6):
+            cart.add_item_to_list('Cans')
         
